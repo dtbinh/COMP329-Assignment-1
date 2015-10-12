@@ -13,33 +13,39 @@ public class COMP329ASSIGNMENT1
 	TouchSensor rightBump = new TouchSensor(SensorPort.S1);
 	UltrasonicSensor us = new UltrasonicSensor(SensorPort.S3);
 	
-	ourMap = new int[100][100];	
+	ourMap = new int[15][7];	
 
 	bool finished = false;
 	//create ultrasonic sensor here
 	  
 	public void senseArea()
 	{
+		//if we put probabilityUpdate on the pc could we have the pc work with and update the map in its own time while the robot moves around
+		//again? we could use threads, one to sends data to and recieves visual data from probabilityUpdate on the pc, while the robot
+		//deals with moving to the next location through another thread if so the routine would maybe be something like
+		
 		pilot.rotate(-90);
-		sensorResult = 
+		sensorResult = us.getDistance();
 		ourMap[x,y + 1] = probabilityUpdate(sensorResult);
 		
 		pilot.rotate(-90);
-		sensorResult = 
+		sensorResult = us.getDistance();
 		ourMap[x - 1,y] = probabilityUpdate(sensorResult);
 		
 		pilot.rotate(-90);
-		sensorResult = 
+		sensorResult = us.getDistance();
 		ourMap[x,y - 1] = probabilityUpdate(sensorResult);
 		
 		pilot.rotate(-90);
-		sensorResult = 
+		sensorResult = us.getDistance();
 		ourMap[x + 1,y] = probabilityUpdate(sensorResult);					
 	}
   
 	//could we move this class to be computed on the pc and not on the device?
 	public static void probabilityUpdate(int sensorResult)
 	{
+		//distance could be the difference in pose 
+		
 		//update map visual here also?
 	  
 	}
@@ -57,12 +63,15 @@ public class COMP329ASSIGNMENT1
 		{
 			//spin around and test in the 4 nearby grids with the sensor
 			robot.senseArea();
-							
-			//move forward
-			//if we hit something with the bumpers, an object is definately there, 
+			
+			
+			//move forward, we need to decide how to move, should we just move in a random direction avoiding definitely blocked locations?
+			//if we hit something with the bumpers, an object is definitely there, 
 			// back up a bit, turn 90 degrees and attempt to move around object?
-			//conversely, if we move through without interuption, there must be nothing in our current location
-					   
+			//conversely, if we move through without interuption, there must be nothing in our current location so set to 0
+				
+
+				
 			//update current location depending on movement made		
 			
 			//should we check pose as well here and try and correct our heading?
