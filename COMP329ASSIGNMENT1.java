@@ -52,13 +52,12 @@ public class COMP329ASSIGNMENT1
 			
 	public static void main(String[] args)
 	{		    
+		//would be worth calibrating here to check the margin of error with expected and actual rotation
+		
 		COMP329ASSIGNMENT1 robot = new COMP329ASSIGNMENT1(new DifferentialPilot(2.25f, 5.5f, Motor.B, Motor.C));
 	  
 		Button.ENTER.waitForPress();
 		   
-		//current location is [1,1], should we take heading here too?
-		robot.opp.setPose(1, 1, float 0); 
-		
 		while(finished != true)
 		{
 			//spin around and test in the 4 nearby grids with the sensor
