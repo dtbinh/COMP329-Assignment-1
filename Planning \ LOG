@@ -1,0 +1,44 @@
+PLAN---------------------------------------------------------------------------------------------------------------------
+
+• You are required to write a robot program that will enable your robot to explore the arena and produce a map.
+
+• The robot will start from a known location either position based e.g. an (x, y) coordinate of (20cm, 20cm) or occupancy grid based e.g. the robot starts at the grid coordinate (x, y) of (1,1). Your robot should explore its arena and produce a map using occupancy grid techniques, indicating the probability of each cell being occupied, unoccupied or whether the probability is unknown. Assume grid cells are about the size of the robot (say roughly 25 cm long, 20cm wide)
+
+• The arena will have a small number (between 2 and 4) of obstacles, which will be placed at random locations. These obstacles will be about 21cm width, 33 cm depth, and 21cm high (we will use empty photocopier paper boxes). They are intended to be easily detectable.
+
+• The map produced by the robot will be sent back to a PC via Bluetooth, and will be displayed on the LCD screen of the robot.
+
+• To assist with localization, you can use landmarks/waypoints (e.g., a blue strip of paper crossing the arena) at known locations, which can be detected by your robot.
+
+Robot should attempt to move up x axis of arena, could keep a 2d array that is used as an occupancy grid, whenever robot moves a grid space worth of distance update the index and if it runs into an object update the value at that location. Then maneuver the robot to the next grid space and test.
+
+We need a decent way of making sure we will eventually touch all spots on the grid we can access as quickly as possible, and also a way to visualise the 2d array and send it back / display it. I think we should use a high resolution array and then use summation to bring it down to a lower resolution size that can be displayed somehow.
+
+Things to test right now - test if we can trust pose to be updated properly with the pilot by using test values, will be useful to get a degree of error of pose of heading to either correct with fine tuning or use to refine results.
+
+GOOD LINKS?---------------------------------------------------------------------------------------------------------
+
+https://en.wikipedia.org/wiki/Occupancy_grid_mapping
+
+http://paginas.fe.up.pt/~ei04106/personal/public/files/Paper.pdf
+
+http://www.cs.ox.ac.uk/people/michael.wooldridge/teaching/robotics/lect05.pdf
+
+http://www.cs.cmu.edu/~mmde/mmdeaaai2002.pdf
+
+https://vlebb.leeds.ac.uk/bbcswebdav/orgs/SCH_Computing/FYProj/reports/1314/Brown.pdf
+
+LOG ---------------------------------------------------------------------------------------------------------------------
+
+12/10/2105 - Plan created, research into possible methods to achieve the specification begins.
+
+
+
+
+
+
+
+
+
+
+
