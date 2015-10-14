@@ -16,6 +16,8 @@ We need a decent way of making sure we will eventually touch all spots on the gr
 
 Things to test right now - test if we can trust pose to be updated properly with the pilot by using test values, will be useful to get a degree of error of pose of heading to either correct with fine tuning or use to refine results.
 
+Need to check if the robot comes with a compass sensor, if so, we can calibrate better and rely on us knowing the way our robot is facing, if not we need to devise some other method that runs to properly calibrate steering angle to be correct.
+
 GOOD LINKS?---------------------------------------------------------------------------------------------------------
 
 https://en.wikipedia.org/wiki/Occupancy_grid_mapping
@@ -27,6 +29,8 @@ http://www.cs.ox.ac.uk/people/michael.wooldridge/teaching/robotics/lect05.pdf
 http://www.cs.cmu.edu/~mmde/mmdeaaai2002.pdf
 
 https://vlebb.leeds.ac.uk/bbcswebdav/orgs/SCH_Computing/FYProj/reports/1314/Brown.pdf
+
+http://www.lejos.org/nxt/nxj/tutorial/WheeledVehicles/WheeledVehicles.htm
 
 LOG ---------------------------------------------------------------------------------------------------------------------
 
