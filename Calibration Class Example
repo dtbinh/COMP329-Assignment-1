@@ -1,0 +1,74 @@
+package motorTest;
+
+import lejos.nxt.Button;
+import lejos.nxt.ButtonListener;
+import lejos.nxt.LCD;
+import lejos.nxt.Motor;
+import lejos.robotics.navigation.DifferentialPilot;
+
+public class PortTest implements ButtonListener {
+		    
+	private DifferentialPilot pilot;
+	private int turnAngle;
+	
+	PortTest()
+	{
+		 turnAngle = 180;
+		 pilot = new DifferentialPilot(2.25f, 5.5f, Motor.B, Motor.C);
+	     Button.ENTER.addButtonListener((ButtonListener) this);
+	     Button.LEFT.addButtonListener((ButtonListener) this);
+	     Button.RIGHT.addButtonListener((ButtonListener) this);
+	}
+	 
+	public void executeCalibrate()
+	{
+
+		LCD.drawString("Set me and 0 \ndegrees and press \nenter to attempt \na turn", 0, 0);
+		Button.waitForAnyPress();
+	    pilot.rotate(-turnAngle);	
+	    LCD.clear();
+		LCD.drawString("Enter to confirm \nLeft = reduce angle \nRight = increase angle", 0, 0);
+		
+		Button.waitForAnyPress();	
+		int b = Button.readButtons();
+		
+		if(b == Button.ID_ENTER)
+		{
+		    LCD.clear();
+			LCD.drawString("Confirmed! \nturn angle set to:\n" + turnAngle, 0, 0);
+			Button.waitForAnyPress();
+		}
+		if(b == Button.ID_LEFT)
+		{
+			turnAngle--;
+		    LCD.clear();
+			LCD.drawString("Turn angle is now:\n" + turnAngle + "press anything \nto continue", 0, 0);
+			Button.waitForAnyPress();
+			executeCalibrate();
+		}
+		if(b == Button.ID_RIGHT)
+		{
+			turnAngle++;
+		    LCD.clear();
+			LCD.drawString("Turn angle is now:\n" + turnAngle + "\npress anything \nto continue", 0, 0);
+			Button.waitForAnyPress();
+			executeCalibrate();
+		}		
+	}
+	
+	public static void main(String[] args)
+	{
+	    PortTest programInstance = new PortTest();
+		System.out.println("About to turn!");
+	    programInstance.executeCalibrate();    
+	}
+
+	public void buttonPressed(Button b) 
+	{
+	}
+
+	public void buttonReleased(Button b) 
+	{
+
+	}
+}
