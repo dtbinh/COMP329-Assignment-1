@@ -56,7 +56,7 @@ public class COMP329ASSIGNMENT1
 		}
 			
 		//check to our immediate right
-		pilot.rotate(-90);	
+		Motor.A.rotate(720);	
 		sensorResult = us.getDistance();
 		gridDistance = Math.round(sensorResult / 25);
 		mapCount[x + gridDistance,y]++;
@@ -69,22 +69,8 @@ public class COMP329ASSIGNMENT1
 			ourMap[x + gridDistance,y] = ((--ourMap[x + gridDistance,y] + mapCount[x + gridDistance,y]) / 2 * mapCount[x + gridDistance,y]);
 		}
 		
-		//check behind us
-		pilot.rotate(-90);	
-		sensorResult = us.getDistance();
-		gridDistance = Math.round(sensorResult / 25);
-		mapCount[x,y - gridDistance]++;
-		ourMap[x,y - gridDistance] = ((++ourMap[x,y - gridDistance] + mapCount[x,y - gridDistance]) / 2 * mapCount[x,y - gridDistance]);
-		
-		gridDistance--; 
-		for(gridDistance >= 0; gridDistance--)
-		{
-			mapCount[x,y - gridDistance]++;
-			ourMap[x,y - gridDistance] = ((--ourMap[x,y - gridDistance] + mapCount[x,y - gridDistance]) / 2 * mapCount[x,y - gridDistance]);
-		}
-		
 		//check to our immediate left
-		pilot.rotate(-90);	
+		pilot.rotate(-1440);	
 		sensorResult = us.getDistance();
 		gridDistance = Math.round(sensorResult / 25);
 		mapCount[x - gridDistance,y]++;
@@ -97,7 +83,7 @@ public class COMP329ASSIGNMENT1
 			ourMap[x - gridDistance,y] = ((--ourMap[x - gridDistance,y] + mapCount[x - gridDistance,y]) / 2 * mapCount[x - gridDistance,y]);
 		}	
 		
-		pilot.rotate(-90);
+		pilot.rotate(720);
 	}
   	
 	//send an x, y location here and we can try to navigate the grid to take the robot to it.
