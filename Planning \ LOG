@@ -14,9 +14,7 @@ Robot should attempt to move up x axis of arena, could keep a 2d array that is u
 
 We need a decent way of making sure we will eventually touch all spots on the grid we can access as quickly as possible, and also a way to visualise the 2d array and send it back / display it. I think we should use a high resolution array and then use summation to bring it down to a lower resolution size that can be displayed somehow.
 
-Things to test right now - test if we can trust pose to be updated properly with the pilot by using test values, will be useful to get a degree of error of pose of heading to either correct with fine tuning or use to refine results.
-
-Need to check if the robot comes with a compass sensor, if so, we can calibrate better and rely on us knowing the way our robot is facing, if not we need to devise some other method that runs to properly calibrate steering angle to be correct.
+We can add a listener thread to make sure our robot responds to events properly. Check http://www.lejos.org/nxt/nxj/tutorial/ListenersAndEvents/Listeners_Events.htm
 
 GOOD LINKS?---------------------------------------------------------------------------------------------------------
 
@@ -31,6 +29,7 @@ http://www.cs.cmu.edu/~mmde/mmdeaaai2002.pdf
 https://vlebb.leeds.ac.uk/bbcswebdav/orgs/SCH_Computing/FYProj/reports/1314/Brown.pdf
 
 http://www.lejos.org/nxt/nxj/tutorial/WheeledVehicles/WheeledVehicles.htm
+
 
 LOG ---------------------------------------------------------------------------------------------------------------------
 
