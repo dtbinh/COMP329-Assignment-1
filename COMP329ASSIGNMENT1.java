@@ -40,52 +40,147 @@ public class COMP329ASSIGNMENT1
 		int gridDistance;
 		float sensorResult;
 		
-		//will probably need to add a try catch block incase we go out of range in this matrix's
+		//our heading is 0 at this point!
 		
-		//check ahead of us
-		sensorResult = us.getDistance();
-		gridDistance = Math.round(sensorResult / 25);
-		mapCount[x,y + gridDistance]++;
-		ourMap[x,y + gridDistance] = ((++ourMap[x,y + gridDistance] + mapCount[x,y + gridDistance]) / 2 * mapCount[x,y + gridDistance]);
+				//check ahead of us
+				sensorResult = us.getDistance();
+				gridDistance = Math.round(sensorResult / 25);
+				updateFowards(GridDistance);
+					
+				//check to our immediate right
+				Motor.A.rotate(720);	
+				sensorResult = us.getDistance();
+				gridDistance = Math.round(sensorResult / 25);
+				updateRight(GridDistance);
+				
+				//check to our immediate left
+				pilot.rotate(-1440);	
+				sensorResult = us.getDistance();
+				gridDistance = Math.round(sensorResult / 25);
+				updateLeft(GridDistance);
+
+				Motor.A.rotate(720); //reset our sensor to point forwards again
 		
-		gridDistance--; 
-		for(gridDistance >= 0; gridDistance--)
-		{
-			mapCount[x,y + gridDistance]++;
-			ourMap[x,y + gridDistance] = ((--ourMap[x,y + gridDistance] + mapCount[x,y + gridDistance]) / 2 * mapCount[x,y + gridDistance]);
-		}
+		//rotate robot to face right
+		pilot.rotate(turnDirection);
+		
+				sensorResult = us.getDistance();
+				gridDistance = Math.round(sensorResult / 25);
+				updateRight(GridDistance);
+					
+				//check to our immediate right
+				Motor.A.rotate(720);	
+				sensorResult = us.getDistance();
+				gridDistance = Math.round(sensorResult / 25);
+				updateBack(GridDistance);
+				
+				//check to our immediate left
+				pilot.rotate(-1440);	
+				sensorResult = us.getDistance();
+				gridDistance = Math.round(sensorResult / 25);
+				updateForwards(GridDistance);
+				
+				Motor.A.rotate(720); //reset our sensor to point forwards again
+
+		//rotate to face backwards	
+		pilot.rotate(turnDirection);
+	
+				sensorResult = us.getDistance();
+				gridDistance = Math.round(sensorResult / 25);
+				updateBack(GridDistance);
+					
+				//check to our immediate right
+				Motor.A.rotate(720);	
+				sensorResult = us.getDistance();
+				gridDistance = Math.round(sensorResult / 25);
+				updateLeft(GridDistance);
+				
+				//check to our immediate left
+				pilot.rotate(-1440);	
+				sensorResult = us.getDistance();
+				gridDistance = Math.round(sensorResult / 25);
+				updateRight(GridDistance);
+				
+				Motor.A.rotate(720); //reset our sensor to point forwards again
+
+		//rotate to face left	
+		pilot.rotate(turnDirection);
+	
+				sensorResult = us.getDistance();
+				gridDistance = Math.round(sensorResult / 25);
+				updateLeft(GridDistance);
+					
+				//check to our immediate right
+				Motor.A.rotate(720);	
+				sensorResult = us.getDistance();
+				gridDistance = Math.round(sensorResult / 25);
+				updateForwards(GridDistance);
+				
+				//check to our immediate left
+				pilot.rotate(-1440);	
+				sensorResult = us.getDistance();
+				gridDistance = Math.round(sensorResult / 25);
+				updateBack(GridDistance);
+				
+				Motor.A.rotate(720); //reset our sensor to point forwards again
 			
-		//check to our immediate right
-		Motor.A.rotate(720);	
-		sensorResult = us.getDistance();
-		gridDistance = Math.round(sensorResult / 25);
-		mapCount[x + gridDistance,y]++;
-		ourMap[x + gridDistance,y] = ((++ourMap[x + gridDistance,y] + mapCount[x + gridDistance,y]) / 2 * mapCount[x + gridDistance,y]);
+		//rotate back to forwards
+		pilot.rotate(turnDirection);
 		
-		gridDistance--; 
-		for(gridDistance >= 0; gridDistance--)
-		{
-			mapCount[x + gridDistance,y]++;
-			ourMap[x + gridDistance,y] = ((--ourMap[x + gridDistance,y] + mapCount[x + gridDistance,y]) / 2 * mapCount[x + gridDistance,y]);
-		}
-		
-		//check to our immediate left
-		pilot.rotate(-1440);	
-		sensorResult = us.getDistance();
-		gridDistance = Math.round(sensorResult / 25);
-		mapCount[x - gridDistance,y]++;
-		ourMap[x - gridDistance,y] = ((++ourMap[x - gridDistance,y] + mapCount[x - gridDistance,y]) / 2 * mapCount[x - gridDistance,y]);
-		
-		gridDistance--; 
-		for(gridDistance >= 0; gridDistance--)
-		{
-			mapCount[x - gridDistance,y]++;
-			ourMap[x - gridDistance,y] = ((--ourMap[x - gridDistance,y] + mapCount[x - gridDistance,y]) / 2 * mapCount[x - gridDistance,y]);
-		}	
-		
-		pilot.rotate(720);
+		//might be worth trying to do a check here to see if we are really facing forwards
 	}
   	
+	public void updateFowards(int gridDistance)
+	{
+		mapCount[x][y + gridDistance]++;
+		ourMap[x][y + gridDistance] = ((++ourMap[x][y + gridDistance] + mapCount[x][y + gridDistance]) / 2 * mapCount[x][y + gridDistance]);
+		
+		gridDistance--; 
+		for(gridDistance >= 0; gridDistance--)
+		{
+			mapCount[x][y + gridDistance]++;
+			ourMap[x][y + gridDistance] = ((--ourMap[x][y + gridDistance] + mapCount[x][y + gridDistance]) / 2 * mapCount[x][y + gridDistance]);
+		}
+	}
+	
+	public void updateLeft(int gridDistance)
+	{
+		mapCount[x - gridDistance,y]++;
+		ourMap[x - gridDistance][y] = ((++ourMap[x - gridDistance][y] + mapCount[x - gridDistance][y]) / 2 * mapCount[x - gridDistance][y]);
+		
+		gridDistance--; 
+		for(gridDistance >= 0; gridDistance--)
+		{
+			mapCount[x - gridDistance][y]++;
+			ourMap[x - gridDistance][y] = ((--ourMap[x - gridDistance][y] + mapCount[x - gridDistance][y]) / 2 * mapCount[x - gridDistance][y]);
+		}	
+	}
+	
+	public void updateRight(int gridDistance)
+	{
+		mapCount[x + gridDistance][y]++;
+		ourMap[x + gridDistance][y] = ((++ourMap[x + gridDistance][y] + mapCount[x + gridDistance][y]) / 2 * mapCount[x + gridDistance][y]);
+		
+		gridDistance--; 
+		for(gridDistance >= 0; gridDistance--)
+		{
+			mapCount[x + gridDistance][y]++;
+			ourMap[x + gridDistance][y] = ((--ourMap[x + gridDistance][y] + mapCount[x + gridDistance][y]) / 2 * mapCount[x + gridDistance][y]);
+		}
+	}
+	
+	public void updateBack(int gridDistance)
+	{		
+		mapCount[x][y - gridDistance]++;
+		ourMap[x][y - gridDistance] = ((++ourMap[x][y - gridDistance] + mapCount[x][y - gridDistance]) / 2 * mapCount[x][y - gridDistance]);
+		
+		gridDistance--; 
+		for(gridDistance >= 0; gridDistance--)
+		{
+			mapCount[x][y - gridDistance]++;
+			ourMap[x][y - gridDistance] = ((--ourMap[x][y - gridDistance] + mapCount[x][y - gridDistance]) / 2 * mapCount[x][y - gridDistance]);
+		}
+	}
 	//send an x, y location here and we can try to navigate the grid to take the robot to it.
 	public static void navigateTO()
 	{
