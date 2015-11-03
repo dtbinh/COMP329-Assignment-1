@@ -1,0 +1,24 @@
+public class Node {
+
+		    public Node parent;
+		    public int x, y;
+		    public double f, g, h;
+		
+	public Node()  {
+		
+		x = 0;
+		y = 0;
+	    f = 0;
+	    g = 0;
+	    h = 0;
+	}
+	
+	public Node(int x, int y)  {
+		
+		this.x = x;
+		this.y = y;
+	    f = 0;
+	    g = 0;
+	    h = 0;
+	}
+}
