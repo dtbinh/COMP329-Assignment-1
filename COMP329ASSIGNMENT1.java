@@ -6,16 +6,17 @@ import lejos.nxt.UltrasonicSensor;
 import lejos.nxt.LCD;
 import lejos.robotics.navigation.*;
 import lejos.robotics.localization.OdometryPoseProvider;
+import java.util.ArrayList;
 
 public class ASSIGNMENT1
 {
 	protected UltrasonicSensor us;
 	protected DifferentialPilot pilot;
 	protected OdometryPoseProvider opp;
-	int turnAngle;
-	int locX, locY;
-	int[][] ourMap;
-	int[][] mapCount;
+	int turnAngle, locX, locY, gridSize;
+	int[][] ourMap;   //shows how sure we are an object exists at each location
+	int[][] mapCount; //how many times we have checked a location
+	int[][] routeMap;	
 	static Boolean finished;
 	
 	ASSIGNMENT1()
@@ -36,6 +37,7 @@ public class ASSIGNMENT1
 		turnAngle = 250;
 		locX = 1;
 		locY = 1;
+		gridSize = 25;
 		
 		for(int i = 0; i<6; i++)
 		{
@@ -43,105 +45,47 @@ public class ASSIGNMENT1
 			{
 				ourMap[i][j] = 0;
 				mapCount[i][j] = 0;
+				routeMap[i][j] = 0;
 			}		
 		}		
 	}	
 	    
 	public void senseArea()
 	{	
-		int gridDistance;
-		float sensorResult;
-		//our heading is 0 at this point!
+		float sensorMyLeft, sensorMyForwards, sensorMyRight;
 		
-				//check left
-				sensorResult = us.getDistance();
-				gridDistance = Math.round(sensorResult / 25);
-				updateLeft(gridDistance);
-						
-				//check ahead of us
-				Motor.A.rotate(720);	
-				sensorResult = us.getDistance();
-				gridDistance = Math.round(sensorResult / 25);
-				updateFowards(gridDistance);
-					
-				//check to our immediate right
-				Motor.A.rotate(720);	
-				sensorResult = us.getDistance();
-				gridDistance = Math.round(sensorResult / 25);
-				updateRight(gridDistance);
-				
-				Motor.A.rotate(-1440); //reset our sensor to point left again
-		
-		//rotate robot to face right
-		pilot.rotate(turnAngle);
-		
-				//check left
-				sensorResult = us.getDistance();
-				gridDistance = Math.round(sensorResult / 25);
-				updateFowards(gridDistance);
-						
-				//check ahead of us
-				Motor.A.rotate(720);	
-				sensorResult = us.getDistance();
-				gridDistance = Math.round(sensorResult / 25);
-				updateRight(gridDistance);
-					
-				//check to our immediate right
-				Motor.A.rotate(720);	
-				sensorResult = us.getDistance();
-				gridDistance = Math.round(sensorResult / 25);
-				updateBack(gridDistance);
-				
-				Motor.A.rotate(-1440); //reset our sensor to point left again
-
-		//rotate to face backwards	
-		pilot.rotate(turnAngle);
-	
-				//check left
-				sensorResult = us.getDistance();
-				gridDistance = Math.round(sensorResult / 25);
-				updateRight(gridDistance);
-						
-				//check ahead of us
-				Motor.A.rotate(720);	
-				sensorResult = us.getDistance();
-				gridDistance = Math.round(sensorResult / 25);
-				updateBack(gridDistance);
-					
-				//check to our immediate right
-				Motor.A.rotate(720);	
-				sensorResult = us.getDistance();
-				gridDistance = Math.round(sensorResult / 25);
-				updateLeft(gridDistance);
-				
-				Motor.A.rotate(-1440); //reset our sensor to point left again
-
-		//rotate to face left	
-		pilot.rotate(turnAngle);
-	
-				//check left
-				sensorResult = us.getDistance();
-				gridDistance = Math.round(sensorResult / 25);
-				updateBack(gridDistance);
-						
-				//check ahead of us
-				Motor.A.rotate(720);	
-				sensorResult = us.getDistance();
-				gridDistance = Math.round(sensorResult / 25);
-				updateLeft(gridDistance);
-					
-				//check to our immediate right
-				Motor.A.rotate(720);	
-				sensorResult = us.getDistance();
-				gridDistance = Math.round(sensorResult / 25);
-				updateFowards(gridDistance);
-				
-				Motor.A.rotate(-1440); //reset our sensor to point left again
+		sensorMyLeft = Math.round(us.getDistance() / gridSize);		//check left		
+		Motor.A.rotate(720);	
+		sensorMyForwards = Math.round(us.getDistance() / gridSize);	//check ahead of us		
+		Motor.A.rotate(720);	
+		sensorMyRight = Math.round(us.getDistance() / gridSize);	//check  right
 			
-		//rotate back to forwards
-		pilot.rotate(turnAngle);
+		Motor.A.rotate(-1440); //reset our sensor to point left again
 		
-		//might be worth trying to do a check here to see if we are really facing forwards
+		if(opp.heading == 0)
+		{
+			updateFowards(sensorMyForwards);
+			updateRight(sensorMyRight);
+			updateLeft(sensorMyLeft);
+		}
+		if(opp.heading == turnAngle)
+		{
+			updateFowards(sensorMyLeft);
+			updateBack(sensorMyRight);
+			updateRight(sensorMyForwards);
+		}
+		if(opp.heading == -turnAngle)
+		{
+			updateFowards(sensorMyRight);
+			updateBack(sensorMyLeft);
+			updateLeft(sensorMyForwards);
+		}
+		if(opp.heading == turnAngle * 2)
+		{
+			updateBack(sensorMyForwards);
+			updateRight(sensorMyLeft);
+			updateLeft(sensorMyRight);
+		}
 	}
   	
 	public void updateFowards(int gridDistance)
@@ -260,34 +204,152 @@ public class ASSIGNMENT1
 		{
 			for(int j = 0; j<8; j++)
 			{	
-				LCD.drawInt(ourMap[i][j], i + i, j);							
+				if(j == locY && i == locX)
+				{
+					LCD.drawString("X", locX + 1, locY);			
+				}
+				else
+				{
+					LCD.drawInt(ourMap[i][j], i + i, j);				
+				}
 			}		
+		}	
+	}
+	
+	public void findpath(Node start, Node end) 
+	{ 	
+		ArrayList <Node> open = new ArrayList<Node>();  //initialize the open list
+		ArrayList <Node> close = new ArrayList<Node>(); //initialize the closed list
+		Node current = new Node();
+        open.add(start); 	//put the starting node on the open list (you can leave its f at zero)
+		
+        while(!open.isEmpty()) //while the open list is not empty
+		{			
+			current.f = 200;
+			//find the node with the least f on the open list, call it "current"
+			for(Node i : open) 
+			{
+				if(i.f <= current.f)
+				{
+					current = i;
+				}
+			}
+
+			//if current is the goal, stop the search
+			if(current.x == end.x && current.y == end.y)
+			{
+				return;
+			}	
+				
+			open.remove(current);//pop q off the open list
+			close.add(current); //push current on the closed list 
+				
+			//generate current's 4 successors and set their parents to current
+			//for each successor
+			ArrayList<Node> nextNodes = GetAdjacentWalkableNodes(current);
+			Outer:
+			for(Node i : nextNodes) 
+			{	
+				if (close.contains(i)) // Ignore the neighbor which is already evaluated.
+				{
+					continue Outer;
+				}	
+														
+				double tentative_g_score = current.g + Math.sqrt(Math.pow(current.x - i.x, 2) + Math.pow(current.y - i.y, 2)); // length of this path.
+				
+				boolean contained = false;
+				for(Node j : open) {
+					if(j.x == i.x && j.y == i.y)
+					{
+						contained = true;
+					}
+				}
+			
+				if (contained == false)
+				{
+					open.add(i); // Discover a new node
+				}
+						
+				else if (tentative_g_score >= i.g) 
+				{
+					continue Outer;		// This is not a better path.
+				}
+
+				// This path is the best until now. Record it!
+				i.parent = current;
+				i.g = tentative_g_score;
+				i.h = Math.sqrt(Math.pow(end.x - i.x, 2) + Math.pow(end.y - i.y, 2)); //distance from goal to successor
+				i.f = i.g + i.h;
+												
+				//just for drawing it out later
+				if((i.x < 8) && (i.y < 8))
+				{
+					if((i.x >= 0) && (i.y >= 0))
+					{
+						routeMap[i.x][i.y] = i.f;
+					}					
+				}					
+			}
+        }		
+		return;
+	}
+	
+	//returns a list of neighbouring cells that we think are traversable
+	private ArrayList<Node> GetAdjacentWalkableNodes(Node fromNode)
+	{
+		ArrayList <Node> walkableNodes = new ArrayList<Node>();
+		if((fromNode.x - 1) < 8 && fromNode.y < 8)
+		{
+			if((fromNode.x - 1) >= 0 && fromNode.y >= 0)
+			{
+				if(ourMap[fromNode.x - 1][fromNode.y] == 0)
+				{
+					walkableNodes.add(new Node(fromNode.x - 1, fromNode.y));
+				}		
+			}
 		}
-		LCD.drawString("X", locX + 1, locY);	
+		if((fromNode.x + 1) < 8 && fromNode.y < 8)
+		{
+			if((fromNode.x + 1) >= 0 && fromNode.y >= 0)
+			{
+				if(ourMap[fromNode.x + 1][fromNode.y] == 0)
+				{
+					walkableNodes.add(new Node(fromNode.x + 1, fromNode.y));
+				}
+			}
+		}
+		if(fromNode.x < 8 && (fromNode.y - 1) < 8)
+		{
+			if(fromNode.x >= 0 && (fromNode.y - 1) >= 0)
+			{
+				if(ourMap[fromNode.x][fromNode.y - 1] == 0)
+				{
+					walkableNodes.add(new Node(fromNode.x, fromNode.y - 1));
+				}
+			}
+		}
+		if(fromNode.x < 8 && (fromNode.y + 1) < 8)
+		{
+			if(fromNode.x >= 0 && (fromNode.y + 1) >= 0)
+			{
+				if(ourMap[fromNode.x][fromNode.y + 1] == 0)
+				{
+					walkableNodes.add(new Node(fromNode.x, fromNode.y + 1));
+				}
+			}
+		}	
+		
+		return walkableNodes;
+	}
+	
+	private void pickGoal()
+	{
+		
 	}
 	
 	public void isBlue()
 	{
 		
-	}
-	
-	public void AStarSearch()
-	{
-		//At initialization add the starting location to the open list and empty the closed list
-		
-    		//While there are still more possible next steps in the open list and we haven’t found the target:
-    		
-        	//Select the most likely next step (based on both the heuristic and path costs)
-        	
-        	//Remove it from the open list and add it to the closed
-        	
-        	//Consider each neighbor of the step. For each neighbor:
-        	
-            	//Calculate the path cost of reaching the neighbor
-            	
-            	//If the cost is less than the cost known for this location then remove it from the open or closed lists (since we’ve now found a better route)
-            	
-            	//If the location isn’t in either the open or closed list then record the costs for the location and add it to the open list (this means it’ll be considered in the next search). Record how we got to this location
 	}
 	
 	public static void main(String[] args)
